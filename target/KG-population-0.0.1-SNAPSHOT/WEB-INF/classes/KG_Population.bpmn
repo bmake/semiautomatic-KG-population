@@ -7,10 +7,10 @@
     <bpmn:laneSet>
       <bpmn:lane id="Lane_0njs4rm" name="OntoWiki">
         <bpmn:flowNodeRef>ExclusiveGateway_0xpy1mr</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>EndEvent_11ej7d5</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0uqxz83</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_1o9a7yp</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0q1uk26</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_0uqxz83</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_11ej7d5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1o9a7yp</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_003w9la" name="CrossRef API">
         <bpmn:flowNodeRef>Task_1deft6a</bpmn:flowNodeRef>
@@ -23,9 +23,9 @@
       </bpmn:lane>
       <bpmn:lane id="Lane_1f2tdhr" name="Process Engine">
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_1bpy8p4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1phovhc</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0qnba7m</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1bpy8p4</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0bs76qt" name="ORCID API">
         <bpmn:flowNodeRef>Task_11cpv0z</bpmn:flowNodeRef>
@@ -36,7 +36,6 @@
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="doi" label="Specify DOI:" type="string" />
-          <camunda:formField id="doicws" label="DOI for CWS" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_1725ww7</bpmn:outgoing>
@@ -61,10 +60,34 @@
     </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="SequenceFlow_0pvhyow" sourceRef="Task_1cn5g0r" targetRef="ExclusiveGateway_16sa65y" />
     <bpmn:sequenceFlow id="SequenceFlow_0gff6w8" sourceRef="ExclusiveGateway_16sa65y" targetRef="Task_1phovhc" />
+    <bpmn:task id="Task_1phovhc" name="Generate missing identifiers in spe namespace">
+      <bpmn:incoming>SequenceFlow_0gff6w8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_028rl4q</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_0qnba7m" name="Generate RDF data frame">
+      <bpmn:incoming>SequenceFlow_028rl4q</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ayesbr</bpmn:outgoing>
+    </bpmn:task>
     <bpmn:sequenceFlow id="SequenceFlow_028rl4q" sourceRef="Task_1phovhc" targetRef="Task_0qnba7m" />
-    <bpmn:sequenceFlow id="SequenceFlow_1v25cef" sourceRef="Task_0q1uk26" targetRef="Task_1o9a7yp" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ayesbr" sourceRef="Task_0qnba7m" targetRef="Task_0q1uk26" />
+    <bpmn:task id="Task_0q1uk26" name="Import RDF data frame into knowledge base">
+      <bpmn:incoming>SequenceFlow_1ayesbr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1v25cef</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_1v25cef" sourceRef="Task_0q1uk26" targetRef="Task_0uqxz83" />
+    <bpmn:userTask id="Task_0uqxz83" name="Add missing metadata">
+      <bpmn:incoming>SequenceFlow_1v25cef</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qfh79p</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1qfh79p" sourceRef="Task_0uqxz83" targetRef="Task_1o9a7yp" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ivuwog" sourceRef="Task_1o9a7yp" targetRef="Task_0q1uk26" />
+    <bpmn:endEvent id="EndEvent_11ej7d5" name="Scholarly article recorded">
+      <bpmn:incoming>SequenceFlow_0ivuwog</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0ivuwog" sourceRef="Task_1o9a7yp" targetRef="EndEvent_11ej7d5" />
+    <bpmn:userTask id="Task_1o9a7yp" name="Add results of qualitative analysis">
+      <bpmn:incoming>SequenceFlow_1qfh79p</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ivuwog</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:serviceTask id="Task_1deft6a" name="Get open data on scholarly article">
       <bpmn:extensionElements>
         <camunda:connector>
@@ -86,7 +109,6 @@ if (statusCode == 200) {
 var json = S(response).prop("message").prop("items").elements().get(0);
 var authorList = json.prop("author");
 var title = json.prop("title").elements().get(0).value();
-
 connector.setVariable("title", title);
 connector.setVariable("authorList", authorList);
 } else {
@@ -106,7 +128,7 @@ connector.setVariable("authorList", authorList);
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker"><![CDATA[https://api.crossref.org/works?filter=doi:${doi}&select=event,publisher,ISBN,container-title]]></camunda:script>
+              <camunda:script scriptFormat="freemarker"><![CDATA[https://api.crossref.org/works?filter=doi:${doi}&select=event,publisher]]></camunda:script>
             </camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -121,16 +143,8 @@ if (statusCode == 200) {
     var json = S(response).prop("message").prop("items").elements().get(0);
     var publisher = json.prop("publisher").value();
     connector.setVariable("publisher", publisher);
-    var containerList = json.prop("container-title");
-    var container = containerList.elements().get(containerList.length-1).value();
-    connector.setVariable("container", container);
-    var ISBN = json.prop("ISBN").elements().get(0).value();
-    connector.setVariable("ISBN", ISBN);
-
-    var eventExist = 0;
-    if(json.fieldNames().get(0) == "event") {
-
-        eventExist = 1;
+    
+    if(json.fieldNames().length < 3) {
         var event = json.prop("event");
         var eventName = event.prop("name").value();
         var eventLocation = event.prop("location").value();
@@ -141,7 +155,6 @@ if (statusCode == 200) {
         connector.setVariable("eventCity", eventCity);
         connector.setVariable("eventCountry", eventCountry);
     }
-    connector.setVariable("eventExist", eventExist);
 }
 else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("CrossRefError");
@@ -166,35 +179,17 @@ else {
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="Javascript"><![CDATA[var eventExist = execution.getVariable("eventExist");
-var publisher = execution.getVariable("publisher");
-var eventCity = execution.getVariable("eventCity");
-var eventCountry = execution.getVariable("eventCountry");
-if (eventExist=0) {
-    var url = "https://query.wikidata.org/sparql?query=SELECT+?publisher+?publishercountry+WHERE%7B?publisher+wdt:P31+wd:Q2085381;skos:altLabel+?object;wdt:P17+?publishercountry.FILTER+REGEX(?object,%22" + publisher + "%22)+FILTER(LANG(?object)=%22en%22)%7D";
-} else {
-    var url = "https://query.wikidata.org/sparql?query=SELECT+?publisher+?publishercountry+?eventcity+WHERE%7B?publisher+wdt:P31+wd:Q2085381;skos:altLabel+?object;wdt:P17+?publishercountry.FILTER+REGEX(?object,%22" + publisher + "%22)+FILTER(LANG(?object)=%22en%22)OPTIONAL%7B?eventcity+wdt:P373+%22" + eventCity + "%22;wdt:P17+?eventcountry.?eventcountry+wdt:P373+%22" + eventCountry + "%22.%7D%7D";
-}
-
-url;
-
-]]></camunda:script>
+              <camunda:script scriptFormat="freemarker">https://query.wikidata.org/sparql?query=SELECT+?publisher+?country+WHERE%7B?publisher+wdt:P31+wd:Q2085381;skos:altLabel+?object;wdt:P17+?country.FILTER+REGEX(?object,%22${publisher}%22)+FILTER(LANG(?object)=%22en%22)%7D</camunda:script>
             </camunda:inputParameter>
             <camunda:outputParameter name="Output_3at8phq">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
 var response = connector.getVariable("response");
-var eventExist = connector.getVariable("eventExist");
 
 if (statusCode == 200) {
     var json = S(response).prop("results").prop("bindings").elements().get(0);
     var publisherID = json.prop("publisher").prop("value").value();
-    var publisherCountry = json.prop("publishercountry").prop("value").value();
+    var publisherCountry = json.prop("country").prop("value").value();
     connector.setVariable("publisherID", publisherID);
-
-    if (eventExist !=0) {
-        var eventCityID = json.prop("eventcity").prop("value").value();
-        connector.setVariable("eventCityID", eventCityID);
-    }
 
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("WikidataError");
@@ -223,10 +218,8 @@ if (statusCode == 200) {
               <camunda:script scriptFormat="Javascript"><![CDATA[var authorList = execution.getVariable("authorList");
 var elements = authorList.elements();
 var given = elements.get(0).prop("given").value();
-execution.setVariable("given", given);
 given = given.replace(/\s/g, "+");
 var family = elements.get(0).prop("family").value();
-execution.setVariable("family", family);
 family = family.replace(/\s/g, "+");
 var url = "https://pub.orcid.org/v2.1/search/?q=family-name:" + family + "+AND+given-names:" + given;
 
@@ -238,13 +231,9 @@ url;
 var response = connector.getVariable("response");
 
 if (statusCode == 200) {
-var orcidExist =  S(response).prop("num-found").value();
-    if(orcidExist > 0) {
-       var orcid = S(response).prop("result").elements().get(0).prop("orcid-identifier").prop("uri").value();
-       orcid = orcid.substring(18);
-       connector.setVariable("orcid", orcid);
-    }
-connector.setVariable("orcidExist", orcidExist);
+var orcid = S(response).prop("result").elements().get(0).prop("orcid-identifier").prop("uri").value();
+var orcid = orcid.substring(18);
+connector.setVariable("orcid", orcid);
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("OrcidError");
 }]]></camunda:script>
@@ -272,7 +261,7 @@ connector.setVariable("orcidExist", orcidExist);
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker">https://query.wikidata.org/sparql?query=SELECT+?organization+?city+?country+?website+WHERE%7B?country+wdt:P297+%22${organizationCountry}%22.?city+wdt:P17+?country;wdt:P31+wd:Q22865;skos:altLabel+?obj1.FILTER+REGEX(?obj1,%22${organizationCity}%22)+OPTIONAL%7B?organization+wdt:P131+?city;skos:altLabel+?obj2.FILTER+REGEX(?obj2,%22${organizationName}%22)?organization+wdt:P856+?website.%7D%7D</camunda:script>
+              <camunda:script scriptFormat="freemarker">https://query.wikidata.org/sparql?query=SELECT+?organization+?city+?country+?website+WHERE%7B?country+wdt:P297+%22${organizationCountry}%22.?city+wdt:P17+?country;wdt:P31+wd:Q22865;skos:altLabel+?obj1.FILTER+REGEX(?obj1,%22${organizationCity}%22)+?organization+wdt:P131+?city;skos:altLabel+?obj2.FILTER+REGEX(?obj2,%22${organizationName}%22)?organization+wdt:P856+?website.%7D</camunda:script>
             </camunda:inputParameter>
             <camunda:outputParameter name="Output_2uubv30">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
@@ -282,19 +271,12 @@ if (statusCode == 200) {
     var json = S(response).prop("results").prop("bindings").elements().get(0);
     var organizationCountryID = json.prop("country").prop("value").value();
     var organizationCityID = json.prop("city").prop("value").value();
+    var organizationID = json.prop("organization").prop("value").value();
+    var organizationWebsite = json.prop("website").prop("value").value();
     connector.setVariable("organizationCountryID", organizationCountryID);
     connector.setVariable("organizationCityID", organizationCityID);
-
-    var fieldnames = json.fieldNames();
-    var organizationExist = 0;
-    if (fieldnames.length > 2) {
-         organizationExist = 1;
-         var organizationID = json.prop("organization").prop("value").value();
-         var organizationWebsite = json.prop("website").prop("value").value();
-         connector.setVariable("organizationID", organizationID);
-         connector.setVariable("organizationWebsite", organizationWebsite);
-    }
-    connector.setVariable("organizationExist", organizationExist);
+    connector.setVariable("organizationID", organizationID);
+    connector.setVariable("organizationWebsite", organizationWebsite);
 
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("WikidataError");
@@ -328,25 +310,15 @@ if (statusCode == 200) {
 var response = connector.getVariable("response");
 
 if (statusCode == 200) {
-var affiliationExist = 0;
-var affiliation = S(response).prop("employment-summary");
-
-   if (affiliation.isNull()) {
-      affiliationExist = 0;
-   } else {
-      affiliationExist = 1;
-      var organization = S(response).prop("employment-summary").elements().get(0).prop("organization");
-      var organizationName = organization.prop("name").value();
-      organizationName = organizationName.replace(/\s/g, "+");
-      var organizationCity = organization.prop("address").prop("city").value();
-      organizationCity = organizationCity.replace(/\s/g, "+");
-      var organizationCountry = organization.prop("address").prop("country").value();
-      connector.setVariable("organizationName", organizationName);
-      connector.setVariable("organizationCity", organizationCity);
-      connector.setVariable("organizationCountry", organizationCountry);
-   }
-   connector.setVariable("affiliationExist", affiliationExist);
-
+var organization = S(response).prop("employment-summary").elements().get(0).prop("organization");
+var organizationName = organization.prop("name").value();
+organizationName = organizationName.replace(/\s/g, "+");
+var organizationCity = organization.prop("address").prop("city").value();
+organizationCity = organizationCity.replace(/\s/g, "+");
+var organizationCountry = organization.prop("address").prop("country").value();
+connector.setVariable("organizationName", organizationName);
+connector.setVariable("organizationCity", organizationCity);
+connector.setVariable("organizationCountry", organizationCountry);
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("OrcidError");
 }]]></camunda:script>
@@ -357,136 +329,6 @@ var affiliation = S(response).prop("employment-summary");
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0wjgtm2</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1o31z39</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:scriptTask id="Task_1phovhc" name="Generate missing identifiers in spe namespace" scriptFormat="Javascript" camunda:resultVariable=" ">
-      <bpmn:incoming>SequenceFlow_0gff6w8</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_028rl4q</bpmn:outgoing>
-      <bpmn:script><![CDATA[var orcidExist = execution.getVariable("orcidExist");
-var affiliationExist = execution.getVariable("affiliationExist");
-var organizationExist = execution.getVariable("organizationExist");
-var doicws = execution.getVariable("doicws");
-
-if (doicws) {
-    doicws = "https://doi.org/" + doicws;
-    execution.setVariable("doicws", doicws);
-} else {
-    var ISBN = execution.getVariable("ISBN");
-    doicws = "https://bmake.th-brandenburg.de/spe#ISBN" + ISBN;
-    execution.setVariable("doicws", doicws);
-}
-
-if (orcidExist == 0) {
-    var authorList = execution.getVariable("authorList");
-    var elements = authorList.elements();
-    var given = elements.get(0).prop("given").value();
-    given = given.replace(/\s/g, "+");
-    var family = elements.get(0).prop("family").value();
-    family = family.replace(/\s/g, "+");
-    var orcid = "https://bmake.th-brandenburg.de/spe#" + given + family;
-    execution.setVariable("orcid", orcid);
-    execution.setVariable("organizationWebsite", " ");
-} else {
-    var orcid = execution.getVariable("orcid");
-    orcid = "https://orcid.org/" + orcid;
-    execution.setVariable("orcid", orcid);
-}
-
-if (organizationExist == 0) {
-    var organizationName = execution.getVariable("organizationName");
-    var organizationNameNew = organizationName.replace(/\s/g, "+");
-    var organizationID = "https://bmake.th-brandenburg.de/spe#" + organizationNameNew;
-    execution.setVariable("organizationID", organizationID);
-}]]></bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="Task_0qnba7m" name="Generate RDF data frame" scriptFormat="freemarker" camunda:resultVariable="rdf">
-      <bpmn:incoming>SequenceFlow_028rl4q</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1o9hhqc</bpmn:outgoing>
-      <bpmn:script><![CDATA[@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix schema: <https://schema.org/> .
-@prefix wd: <http://www.wikidata.org/entity/> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
-@prefix spv: <https://bmake.th-brandenburg.de/spv#> .
-@prefix spe: <https://bmake.th-brandenburg.de/spe#> .
-@prefix voaf: <http://purl.org/vocommons/voaf#> .
-@prefix vann: <http://purl.org/vocab/vann/> .
-@prefix cc: <http://creativecommons.org/ns#> .
-
-<https://doi.org/${doi}> a schema:ScholarlyArticle ;
-                         schema:author <${orcid}>;
-                         schema:headline "${title}" ;
-                         schema:isPartOf <${doicws}> .
-
-<${orcid}> a schema:Person ;
-						 schema:familyName "${family}" ;
-						 schema:givenName "${given}" ; 
-						 schema:affiliation <${organizationID}> .
-
-<${organizationID}> a schema:Organization ;
-		schema:legalName "${organizationName}" ;
-		schema:location <${organizationCityID}> ;
-		schema:url "${organizationWebsite}" .
-
-<${organizationCityID}> a schema:Place .
-
-<${doicws}>  a schema:CreativeWorkSeries ; 
-		schema:name "${container}" ;
-		schema:publisher <${publisherID}> .
-		
-<${publisherID}> a schema:Organization .]]></bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:endEvent id="EndEvent_11ej7d5" name="Scholarly article recorded">
-      <bpmn:incoming>SequenceFlow_0hy7ehj</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0hy7ehj" sourceRef="Task_0q1uk26" targetRef="EndEvent_11ej7d5" />
-    <bpmn:sequenceFlow id="SequenceFlow_1o9hhqc" sourceRef="Task_0qnba7m" targetRef="Task_0uqxz83" />
-    <bpmn:userTask id="Task_0uqxz83" name="Add missing metadata">
-      <bpmn:incoming>SequenceFlow_1o9hhqc</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1u3l8an</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1qfh79p</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:userTask id="Task_1o9a7yp" name="Add results of qualitative analysis">
-      <bpmn:incoming>SequenceFlow_1qfh79p</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1v25cef</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ivuwog</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_1u3l8an</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1u3l8an" sourceRef="Task_1o9a7yp" targetRef="Task_0uqxz83" />
-    <bpmn:serviceTask id="Task_0q1uk26" name="Import RDF data frame into knowledge base">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker"><![CDATA[http://fbwsvcdev.fh-brandenburg.de/OntoWiki/update?query=INSERT+DATA+INTO+<http://fbwsvcdev.fh-brandenburg.de/OntoWiki/PaperPopulation/>%7B${rdf}%7D]]></camunda:script>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="Accept">application/json; charset=utf-8</camunda:entry>
-                <camunda:entry key="Authorization Basic">d2VueGluOnNwdjIwMTc=</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:outputParameter name="Output_38mqfdf">
-              <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
-var response = connector.getVariable("response");
-if (statusCode == 200) {
-
-}else{
-    throw new org.camunda.bpm.engine.delegate.BpmnError("OntoWikiError");
-}]]></camunda:script>
-            </camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0ivuwog</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1v25cef</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0hy7ehj</bpmn:outgoing>
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -592,52 +434,68 @@ if (statusCode == 200) {
           <dc:Bounds x="560.5" y="493.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1phovhc_di" bpmnElement="Task_1phovhc">
+        <dc:Bounds x="503" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0gff6w8_di" bpmnElement="SequenceFlow_0gff6w8">
         <di:waypoint x="553" y="490" />
         <di:waypoint x="553" y="140" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="523" y="308.5" width="90" height="13" />
+          <dc:Bounds x="568" y="308.5" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0qnba7m_di" bpmnElement="Task_0qnba7m">
+        <dc:Bounds x="653" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_028rl4q_di" bpmnElement="SequenceFlow_028rl4q">
         <di:waypoint x="603" y="100" />
         <di:waypoint x="653" y="100" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="583" y="78.5" width="90" height="13" />
+          <dc:Bounds x="628" y="78" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0q1uk26_di" bpmnElement="Task_0q1uk26">
+        <dc:Bounds x="653" y="191" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ayesbr_di" bpmnElement="SequenceFlow_1ayesbr">
+        <di:waypoint x="703" y="140" />
+        <di:waypoint x="703" y="191" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="718" y="159" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1v25cef_di" bpmnElement="SequenceFlow_1v25cef">
-        <di:waypoint x="986" y="231" />
-        <di:waypoint x="921" y="231" />
+        <di:waypoint x="753" y="231" />
+        <di:waypoint x="803" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="908.5" y="209.5" width="90" height="13" />
+          <dc:Bounds x="778" y="209.5" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0lvhg5u_di" bpmnElement="Task_0uqxz83">
-        <dc:Bounds x="653" y="191" width="100" height="80" />
+        <dc:Bounds x="803" y="191" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1qfh79p_di" bpmnElement="SequenceFlow_1qfh79p">
-        <di:waypoint x="753" y="231" />
-        <di:waypoint x="821" y="231" />
+        <di:waypoint x="903" y="231" />
+        <di:waypoint x="953" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="742" y="209.5" width="90" height="13" />
+          <dc:Bounds x="928" y="209.5" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_11ej7d5_di" bpmnElement="EndEvent_11ej7d5">
-        <dc:Bounds x="1178" y="213" width="36" height="36" />
+        <dc:Bounds x="1103" y="213" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1157" y="252" width="78" height="25" />
+          <dc:Bounds x="1082" y="252" width="78" height="25" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ivuwog_di" bpmnElement="SequenceFlow_0ivuwog">
-        <di:waypoint x="921" y="231" />
-        <di:waypoint x="986" y="231" />
+        <di:waypoint x="1053" y="231" />
+        <di:waypoint x="1103" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="908.5" y="209.5" width="90" height="13" />
+          <dc:Bounds x="1078" y="209.5" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0zevplu_di" bpmnElement="Task_1o9a7yp">
-        <dc:Bounds x="821" y="191" width="100" height="80" />
+        <dc:Bounds x="953" y="191" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0u3bc44_di" bpmnElement="Task_1deft6a">
         <dc:Bounds x="202" y="325" width="100" height="80" />
@@ -668,36 +526,6 @@ if (statusCode == 200) {
       <bpmndi:BPMNShape id="ServiceTask_0l42hwt_di" bpmnElement="Task_1h7i0wn">
         <dc:Bounds x="463" y="621" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_11c6rb5_di" bpmnElement="Task_1phovhc">
-        <dc:Bounds x="503" y="60" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_0omhq4v_di" bpmnElement="Task_0qnba7m">
-        <dc:Bounds x="653" y="60" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0iutlvc_di" bpmnElement="Task_0q1uk26">
-        <dc:Bounds x="986" y="191" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0hy7ehj_di" bpmnElement="SequenceFlow_0hy7ehj">
-        <di:waypoint x="1086" y="231" />
-        <di:waypoint x="1178" y="231" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1132" y="209.5" width="0" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1o9hhqc_di" bpmnElement="SequenceFlow_1o9hhqc">
-        <di:waypoint x="703" y="140" />
-        <di:waypoint x="703" y="191" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="718" y="159" width="0" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1u3l8an_di" bpmnElement="SequenceFlow_1u3l8an">
-        <di:waypoint x="821" y="231" />
-        <di:waypoint x="753" y="231" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="787" y="209" width="0" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

@@ -7,8 +7,8 @@
     <bpmn:laneSet>
       <bpmn:lane id="Lane_0njs4rm" name="OntoWiki">
         <bpmn:flowNodeRef>ExclusiveGateway_0xpy1mr</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>EndEvent_11ej7d5</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0uqxz83</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_11ej7d5</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1o9a7yp</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0q1uk26</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -26,6 +26,7 @@
         <bpmn:flowNodeRef>Task_1bpy8p4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1phovhc</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0qnba7m</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_143ve37</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0bs76qt" name="ORCID API">
         <bpmn:flowNodeRef>Task_11cpv0z</bpmn:flowNodeRef>
@@ -62,9 +63,21 @@
     <bpmn:sequenceFlow id="SequenceFlow_0pvhyow" sourceRef="Task_1cn5g0r" targetRef="ExclusiveGateway_16sa65y" />
     <bpmn:sequenceFlow id="SequenceFlow_0gff6w8" sourceRef="ExclusiveGateway_16sa65y" targetRef="Task_1phovhc" />
     <bpmn:sequenceFlow id="SequenceFlow_028rl4q" sourceRef="Task_1phovhc" targetRef="Task_0qnba7m" />
-    <bpmn:sequenceFlow id="SequenceFlow_1v25cef" sourceRef="Task_0q1uk26" targetRef="Task_1o9a7yp" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ayesbr" sourceRef="Task_0qnba7m" targetRef="Task_143ve37" />
+    <bpmn:sequenceFlow id="SequenceFlow_1v25cef" sourceRef="Task_0q1uk26" targetRef="Task_0uqxz83" />
+    <bpmn:userTask id="Task_0uqxz83" name="Add missing metadata">
+      <bpmn:incoming>SequenceFlow_1v25cef</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qfh79p</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1qfh79p" sourceRef="Task_0uqxz83" targetRef="Task_1o9a7yp" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ivuwog" sourceRef="Task_1o9a7yp" targetRef="Task_0q1uk26" />
+    <bpmn:endEvent id="EndEvent_11ej7d5" name="Scholarly article recorded">
+      <bpmn:incoming>SequenceFlow_0ivuwog</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0ivuwog" sourceRef="Task_1o9a7yp" targetRef="EndEvent_11ej7d5" />
+    <bpmn:userTask id="Task_1o9a7yp" name="Add results of qualitative analysis">
+      <bpmn:incoming>SequenceFlow_1qfh79p</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ivuwog</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:serviceTask id="Task_1deft6a" name="Get open data on scholarly article">
       <bpmn:extensionElements>
         <camunda:connector>
@@ -400,22 +413,22 @@ if (organizationExist == 0) {
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Task_0qnba7m" name="Generate RDF data frame" scriptFormat="freemarker" camunda:resultVariable="rdf">
       <bpmn:incoming>SequenceFlow_028rl4q</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1o9hhqc</bpmn:outgoing>
-      <bpmn:script><![CDATA[@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix schema: <https://schema.org/> .
-@prefix wd: <http://www.wikidata.org/entity/> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
-@prefix spv: <https://bmake.th-brandenburg.de/spv#> .
-@prefix spe: <https://bmake.th-brandenburg.de/spe#> .
-@prefix voaf: <http://purl.org/vocommons/voaf#> .
-@prefix vann: <http://purl.org/vocab/vann/> .
-@prefix cc: <http://creativecommons.org/ns#> .
+      <bpmn:outgoing>SequenceFlow_1ayesbr</bpmn:outgoing>
+      <bpmn:script><![CDATA[PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX schema: <https://schema.org/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#>
+PREFIX spv: <https://bmake.th-brandenburg.de/spv#>
+PREFIX spe: <https://bmake.th-brandenburg.de/spe#>
+PREFIX voaf: <http://purl.org/vocommons/voaf#>
+PREFIX vann: <http://purl.org/vocab/vann/>
+PREFIX cc: <http://creativecommons.org/ns#>
 
 <https://doi.org/${doi}> a schema:ScholarlyArticle ;
                          schema:author <${orcid}>;
@@ -440,36 +453,29 @@ if (organizationExist == 0) {
 		
 <${publisherID}> a schema:Organization .]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:endEvent id="EndEvent_11ej7d5" name="Scholarly article recorded">
-      <bpmn:incoming>SequenceFlow_0hy7ehj</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0hy7ehj" sourceRef="Task_0q1uk26" targetRef="EndEvent_11ej7d5" />
-    <bpmn:sequenceFlow id="SequenceFlow_1o9hhqc" sourceRef="Task_0qnba7m" targetRef="Task_0uqxz83" />
-    <bpmn:userTask id="Task_0uqxz83" name="Add missing metadata">
-      <bpmn:incoming>SequenceFlow_1o9hhqc</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1u3l8an</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1qfh79p</bpmn:outgoing>
+    <bpmn:sequenceFlow id="SequenceFlow_0e6qo49" sourceRef="Task_143ve37" targetRef="Task_0q1uk26" />
+    <bpmn:userTask id="Task_143ve37" name="test">
+      <bpmn:incoming>SequenceFlow_1ayesbr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0e6qo49</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_1o9a7yp" name="Add results of qualitative analysis">
-      <bpmn:incoming>SequenceFlow_1qfh79p</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1v25cef</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ivuwog</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_1u3l8an</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1u3l8an" sourceRef="Task_1o9a7yp" targetRef="Task_0uqxz83" />
     <bpmn:serviceTask id="Task_0q1uk26" name="Import RDF data frame into knowledge base">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker"><![CDATA[http://fbwsvcdev.fh-brandenburg.de/OntoWiki/update?query=INSERT+DATA+INTO+<http://fbwsvcdev.fh-brandenburg.de/OntoWiki/PaperPopulation/>%7B${rdf}%7D]]></camunda:script>
-            </camunda:inputParameter>
+            <camunda:inputParameter name="url">http://fbwsvcdev.fh-brandenburg.de/OntoWiki/update</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
-                <camunda:entry key="Accept">application/json; charset=utf-8</camunda:entry>
+                <camunda:entry key="Accept">application/sparql-results+json; charset=utf-8</camunda:entry>
+                <camunda:entry key="Content-Type">text/turtle</camunda:entry>
                 <camunda:entry key="Authorization Basic">d2VueGluOnNwdjIwMTc=</camunda:entry>
               </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">
+              <camunda:script scriptFormat="freemarker"><![CDATA[INSERT DATA INTO <http://fbwsvcdev.fh-brandenburg.de/OntoWiki/PaperPopulation/>
+{
+   ${rdf}
+}]]></camunda:script>
             </camunda:inputParameter>
             <camunda:outputParameter name="Output_38mqfdf">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
@@ -484,9 +490,8 @@ if (statusCode == 200) {
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0ivuwog</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0e6qo49</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1v25cef</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0hy7ehj</bpmn:outgoing>
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -606,38 +611,45 @@ if (statusCode == 200) {
           <dc:Bounds x="583" y="78.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1v25cef_di" bpmnElement="SequenceFlow_1v25cef">
-        <di:waypoint x="986" y="231" />
-        <di:waypoint x="921" y="231" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1ayesbr_di" bpmnElement="SequenceFlow_1ayesbr">
+        <di:waypoint x="753" y="100" />
+        <di:waypoint x="796" y="100" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="908.5" y="209.5" width="90" height="13" />
+          <dc:Bounds x="729.5" y="78.5" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1v25cef_di" bpmnElement="SequenceFlow_1v25cef">
+        <di:waypoint x="753" y="231" />
+        <di:waypoint x="803" y="231" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="733" y="209.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0lvhg5u_di" bpmnElement="Task_0uqxz83">
-        <dc:Bounds x="653" y="191" width="100" height="80" />
+        <dc:Bounds x="803" y="191" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1qfh79p_di" bpmnElement="SequenceFlow_1qfh79p">
-        <di:waypoint x="753" y="231" />
-        <di:waypoint x="821" y="231" />
+        <di:waypoint x="903" y="231" />
+        <di:waypoint x="953" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="742" y="209.5" width="90" height="13" />
+          <dc:Bounds x="928" y="209.5" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_11ej7d5_di" bpmnElement="EndEvent_11ej7d5">
-        <dc:Bounds x="1178" y="213" width="36" height="36" />
+        <dc:Bounds x="1103" y="213" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1157" y="252" width="78" height="25" />
+          <dc:Bounds x="1082" y="252" width="78" height="25" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ivuwog_di" bpmnElement="SequenceFlow_0ivuwog">
-        <di:waypoint x="921" y="231" />
-        <di:waypoint x="986" y="231" />
+        <di:waypoint x="1053" y="231" />
+        <di:waypoint x="1103" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="908.5" y="209.5" width="90" height="13" />
+          <dc:Bounds x="1078" y="209.5" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0zevplu_di" bpmnElement="Task_1o9a7yp">
-        <dc:Bounds x="821" y="191" width="100" height="80" />
+        <dc:Bounds x="953" y="191" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0u3bc44_di" bpmnElement="Task_1deft6a">
         <dc:Bounds x="202" y="325" width="100" height="80" />
@@ -674,30 +686,21 @@ if (statusCode == 200) {
       <bpmndi:BPMNShape id="ScriptTask_0omhq4v_di" bpmnElement="Task_0qnba7m">
         <dc:Bounds x="653" y="60" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0iutlvc_di" bpmnElement="Task_0q1uk26">
-        <dc:Bounds x="986" y="191" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0hy7ehj_di" bpmnElement="SequenceFlow_0hy7ehj">
-        <di:waypoint x="1086" y="231" />
-        <di:waypoint x="1178" y="231" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1132" y="209.5" width="0" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1o9hhqc_di" bpmnElement="SequenceFlow_1o9hhqc">
-        <di:waypoint x="703" y="140" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0e6qo49_di" bpmnElement="SequenceFlow_0e6qo49">
+        <di:waypoint x="846" y="140" />
+        <di:waypoint x="846" y="171" />
+        <di:waypoint x="703" y="171" />
         <di:waypoint x="703" y="191" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="718" y="159" width="0" height="13" />
+          <dc:Bounds x="774.5" y="149.5" width="0" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1u3l8an_di" bpmnElement="SequenceFlow_1u3l8an">
-        <di:waypoint x="821" y="231" />
-        <di:waypoint x="753" y="231" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="787" y="209" width="0" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0aog8m1_di" bpmnElement="Task_143ve37">
+        <dc:Bounds x="796" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0iutlvc_di" bpmnElement="Task_0q1uk26">
+        <dc:Bounds x="653" y="191" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
