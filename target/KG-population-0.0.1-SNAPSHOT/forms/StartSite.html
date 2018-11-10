@@ -1,0 +1,50 @@
+<form role="form" name="StartSite"
+      class="form-horizontal">
+  
+  <div class="form-group">
+    <label class="control-label col-md-4"
+           for="doi">Specify DOI:</label>
+    <div class="col-md-8">
+      <input cam-variable-name="doi"
+             cam-variable-type="String"
+             id="doi"
+             class="form-control"
+             type="text"
+             />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4"
+           for="doicws">DOI for CWS:</label>
+    <div class="col-md-8">
+      <input cam-variable-name="doicws"
+             cam-variable-type="String"
+             id="doicws"
+             class="form-control"
+             type="text"
+             />
+
+    </div>
+  </div>
+  
+  <script cam-script type="text/form-script">
+
+    camForm.on('submit', function(evt) {
+
+		var doi = $('#doi');
+		var doicws = $('#doicws');
+
+		if (doi == null && doicws == null) {
+      		evt.submitPrevented = true;
+			<p ng-show="StartSite.doi.$error.required">
+        		Either DOI or DOICWS must be provided!
+      		</p>
+		} else {
+			evt.submitPrevented = false;
+		}
+      
+    });
+  </script>
+
+</form>

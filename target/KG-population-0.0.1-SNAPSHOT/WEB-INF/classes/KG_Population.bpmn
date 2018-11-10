@@ -7,10 +7,11 @@
     <bpmn:laneSet>
       <bpmn:lane id="Lane_0njs4rm" name="OntoWiki">
         <bpmn:flowNodeRef>ExclusiveGateway_0xpy1mr</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0q1uk26</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0uqxz83</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_11ej7d5</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1o9a7yp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_0uqxz83</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_056h0f7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_0q1uk26</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_003w9la" name="CrossRef API">
         <bpmn:flowNodeRef>Task_1deft6a</bpmn:flowNodeRef>
@@ -23,12 +24,16 @@
       </bpmn:lane>
       <bpmn:lane id="Lane_1f2tdhr" name="Process Engine">
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_1phovhc</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0qnba7m</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1bpy8p4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1phovhc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_078ej13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_0qnba7m</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1h6fepb</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0bs76qt" name="ORCID API">
         <bpmn:flowNodeRef>Task_11cpv0z</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1q8sa8d</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_157rzqp</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1h7i0wn</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
@@ -36,6 +41,7 @@
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="doi" label="Specify DOI:" type="string" />
+          <camunda:formField id="doicws" label="DOI for CWS:" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_1725ww7</bpmn:outgoing>
@@ -51,7 +57,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_0s4dvnd" sourceRef="ExclusiveGateway_0xpy1mr" targetRef="Task_1u5w6w1" />
     <bpmn:sequenceFlow id="SequenceFlow_1lrtc79" sourceRef="Task_1deft6a" targetRef="Task_11cpv0z" />
     <bpmn:sequenceFlow id="SequenceFlow_0780qax" sourceRef="Task_1u5w6w1" targetRef="Task_1lo51xs" />
-    <bpmn:sequenceFlow id="SequenceFlow_0wjgtm2" sourceRef="Task_11cpv0z" targetRef="Task_1h7i0wn" />
+    <bpmn:sequenceFlow id="SequenceFlow_0wjgtm2" sourceRef="Task_11cpv0z" targetRef="Task_157rzqp" />
     <bpmn:sequenceFlow id="SequenceFlow_0snzytq" sourceRef="Task_1lo51xs" targetRef="ExclusiveGateway_16sa65y" />
     <bpmn:parallelGateway id="ExclusiveGateway_16sa65y">
       <bpmn:incoming>SequenceFlow_0snzytq</bpmn:incoming>
@@ -59,42 +65,32 @@
       <bpmn:outgoing>SequenceFlow_0gff6w8</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="SequenceFlow_0pvhyow" sourceRef="Task_1cn5g0r" targetRef="ExclusiveGateway_16sa65y" />
-    <bpmn:sequenceFlow id="SequenceFlow_0gff6w8" sourceRef="ExclusiveGateway_16sa65y" targetRef="Task_1phovhc" />
-    <bpmn:task id="Task_1phovhc" name="Generate missing identifiers in spe namespace">
-      <bpmn:incoming>SequenceFlow_0gff6w8</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_028rl4q</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Task_0qnba7m" name="Generate RDF data frame">
-      <bpmn:incoming>SequenceFlow_028rl4q</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1ayesbr</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:sequenceFlow id="SequenceFlow_028rl4q" sourceRef="Task_1phovhc" targetRef="Task_0qnba7m" />
-    <bpmn:sequenceFlow id="SequenceFlow_1ayesbr" sourceRef="Task_0qnba7m" targetRef="Task_0q1uk26" />
-    <bpmn:task id="Task_0q1uk26" name="Import RDF data frame into knowledge base">
-      <bpmn:incoming>SequenceFlow_1ayesbr</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1v25cef</bpmn:outgoing>
-    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_0gff6w8" sourceRef="ExclusiveGateway_16sa65y" targetRef="Task_056h0f7" />
+    <bpmn:sequenceFlow id="SequenceFlow_028rl4q" sourceRef="Task_1phovhc" targetRef="Task_1h6fepb" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ayesbr" sourceRef="Task_0qnba7m" targetRef="Task_078ej13" />
     <bpmn:sequenceFlow id="SequenceFlow_1v25cef" sourceRef="Task_0q1uk26" targetRef="Task_0uqxz83" />
-    <bpmn:userTask id="Task_0uqxz83" name="Add missing metadata">
-      <bpmn:incoming>SequenceFlow_1v25cef</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1qfh79p</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1qfh79p" sourceRef="Task_0uqxz83" targetRef="Task_1o9a7yp" />
     <bpmn:endEvent id="EndEvent_11ej7d5" name="Scholarly article recorded">
       <bpmn:incoming>SequenceFlow_0ivuwog</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0ivuwog" sourceRef="Task_1o9a7yp" targetRef="EndEvent_11ej7d5" />
-    <bpmn:userTask id="Task_1o9a7yp" name="Add results of qualitative analysis">
-      <bpmn:incoming>SequenceFlow_1qfh79p</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ivuwog</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:serviceTask id="Task_1deft6a" name="Get open data on scholarly article">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker"><![CDATA[https://api.crossref.org/works?filter=doi:${doi}&select=author,title]]></camunda:script>
+              <camunda:script scriptFormat="Javascript"><![CDATA[var doi = execution.getVariable("doi");
+
+if (doi != null) {
+   var url = "https://api.crossref.org/works?filter=doi:" + doi + "&select=author,title";
+} else {
+   var url = "";
+}
+
+url;
+
+]]></camunda:script>
             </camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -109,8 +105,20 @@ if (statusCode == 200) {
 var json = S(response).prop("message").prop("items").elements().get(0);
 var authorList = json.prop("author");
 var title = json.prop("title").elements().get(0).value();
+
 connector.setVariable("title", title);
 connector.setVariable("authorList", authorList);
+
+var str1 = "{\"authorsWithOrcid\":[]}";
+var json1 = S(str1);
+connector.setVariable("authorsWithOrcid", json1);
+var str2 = "{\"authorsWithoutOrcid\":[]}";
+var json2 = S(str2);
+connector.setVariable("authorsWithoutOrcid", json2);
+var str3 = "{\"orcids\":[]}";
+var json3 = S(str3);
+connector.setVariable("orcids", json3);
+
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("CrossRefError");
 }]]></camunda:script>
@@ -128,7 +136,16 @@ connector.setVariable("authorList", authorList);
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker"><![CDATA[https://api.crossref.org/works?filter=doi:${doi}&select=event,publisher]]></camunda:script>
+              <camunda:script scriptFormat="Javascript"><![CDATA[var doicws = execution.getVariable("doicws");
+var doi = execution.getVariable("doi");
+
+if (doicws != null) {
+	var url = "https://api.crossref.org/works?filter=doi:" + doicws + "&select=publisher,ISBN,ISSN,title";
+} else {
+	var url = "https://api.crossref.org/works?filter=doi:" + doi + "&select=event,publisher,ISBN,ISSN,container-title";
+}
+
+url;]]></camunda:script>
             </camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -138,23 +155,52 @@ connector.setVariable("authorList", authorList);
             <camunda:outputParameter name="Output_0n0vope">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
 var response = connector.getVariable("response");
+var doicws = connector.getVariable("doicws");
 
 if (statusCode == 200) {
-    var json = S(response).prop("message").prop("items").elements().get(0);
-    var publisher = json.prop("publisher").value();
-    connector.setVariable("publisher", publisher);
     
-    if(json.fieldNames().length < 3) {
-        var event = json.prop("event");
-        var eventName = event.prop("name").value();
-        var eventLocation = event.prop("location").value();
-        var eventLocationArray = eventLocation.split(", ");
-        var eventCity = eventLocationArray[0];
-        var eventCountry = eventLocationArray[eventLocationArray.length-1];
-        connector.setVariable("eventName", eventName);
-        connector.setVariable("eventCity", eventCity);
-        connector.setVariable("eventCountry", eventCountry);
-    }
+    var json = S(response).prop("message").prop("items").elements().get(0);
+
+   if (doicws != null){
+      if(json.hasProp("publisher")){var publisher = json.prop("publisher").value();
+        connector.setVariable("publisher", publisher);}
+        
+      if(json.hasProp("ISBN")){var ISBN = json.prop("ISBN").elements().get(0).value();} else if(json.hasProp("ISSN")){var ISBN = 
+        json.prop("ISSN").elements().get(0).value();} else { var ISBN = null;}
+        connector.setVariable("ISBN", ISBN);
+
+      if(json.hasProp("title")){ var containerList = json.prop("title");
+        var container = containerList.elements().get(containerList.length-1).value(); connector.setVariable("container", container); }
+
+   } else {
+  
+        if(json.hasProp("publisher")){ var publisher = json.prop("publisher").value();
+        connector.setVariable("publisher", publisher); }
+    
+        if(json.hasProp("container-title")){ var containerList = json.prop("container-title");
+        var container = containerList.elements().get(containerList.length-1).value(); connector.setVariable("container", container); }
+
+        if(json.hasProp("ISBN")){var ISBN = json.prop("ISBN").elements().get(0).value();} else if(json.hasProp("ISSN")){var ISBN = 
+        json.prop("ISSN").elements().get(0).value();} else { var ISBN = null;}
+        connector.setVariable("ISBN", ISBN);
+   }
+
+        var eventExist = 0;
+        if(json.hasProp("event")) {
+
+           eventExist = 1;
+           var event = json.prop("event");
+           var eventName = event.prop("name").value();
+           var eventLocation = event.prop("location").value();
+           var eventLocationArray = eventLocation.split(", ");
+           var eventCity = eventLocationArray[0];
+           var eventCountry = eventLocationArray[eventLocationArray.length-1];
+           connector.setVariable("eventName", eventName);
+           connector.setVariable("eventCity", eventCity);
+           connector.setVariable("eventCountry", eventCountry);
+         }
+    connector.setVariable("eventExist", eventExist);
+
 }
 else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("CrossRefError");
@@ -179,17 +225,36 @@ else {
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker">https://query.wikidata.org/sparql?query=SELECT+?publisher+?country+WHERE%7B?publisher+wdt:P31+wd:Q2085381;skos:altLabel+?object;wdt:P17+?country.FILTER+REGEX(?object,%22${publisher}%22)+FILTER(LANG(?object)=%22en%22)%7D</camunda:script>
+              <camunda:script scriptFormat="Javascript"><![CDATA[var eventExist = execution.getVariable("eventExist");
+var publisher = execution.getVariable("publisher");
+publisher = publisher.replace(/\s/g, "+");
+var eventCity = execution.getVariable("eventCity");
+var eventCountry = execution.getVariable("eventCountry");
+if (eventExist=0) {
+    var url = "https://query.wikidata.org/sparql?query=SELECT+?publisher+?publishercountry+WHERE%7B?publisher+wdt:P31+wd:Q2085381;skos:altLabel+?object;wdt:P17+?publishercountry.FILTER+REGEX(?object,%22" + publisher + "%22)+FILTER(LANG(?object)=%22en%22)%7D";
+} else {
+    var url = "https://query.wikidata.org/sparql?query=SELECT+?publisher+?publishercountry+?eventcity+WHERE%7B?publisher+wdt:P31+wd:Q2085381;skos:altLabel+?object;wdt:P17+?publishercountry.FILTER+REGEX(?object,%22" + publisher + "%22)+FILTER(LANG(?object)=%22en%22)OPTIONAL%7B?eventcity+wdt:P373+%22" + eventCity + "%22;wdt:P17+?eventcountry.?eventcountry+wdt:P373+%22" + eventCountry + "%22.%7D%7D";
+}
+
+url;
+
+]]></camunda:script>
             </camunda:inputParameter>
             <camunda:outputParameter name="Output_3at8phq">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
 var response = connector.getVariable("response");
+var eventExist = connector.getVariable("eventExist");
 
 if (statusCode == 200) {
     var json = S(response).prop("results").prop("bindings").elements().get(0);
     var publisherID = json.prop("publisher").prop("value").value();
-    var publisherCountry = json.prop("country").prop("value").value();
+    var publisherCountry = json.prop("publishercountry").prop("value").value();
     connector.setVariable("publisherID", publisherID);
+
+    if (eventExist !=0) {
+        var eventCityID = json.prop("eventcity").prop("value").value();
+        connector.setVariable("eventCityID", eventCityID);
+    }
 
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("WikidataError");
@@ -215,12 +280,15 @@ if (statusCode == 200) {
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="Javascript"><![CDATA[var authorList = execution.getVariable("authorList");
-var elements = authorList.elements();
-var given = elements.get(0).prop("given").value();
+              <camunda:script scriptFormat="Javascript"><![CDATA[var given = author.prop("given").value();
 given = given.replace(/\s/g, "+");
-var family = elements.get(0).prop("family").value();
+var family = author.prop("family").value();
 family = family.replace(/\s/g, "+");
+
+var str = "{\"organizations\":[]}";
+var json = S(str);
+execution.setVariable("organizations", json);
+
 var url = "https://pub.orcid.org/v2.1/search/?q=family-name:" + family + "+AND+given-names:" + given;
 
 url;
@@ -229,11 +297,32 @@ url;
             <camunda:outputParameter name="Output_2c422ss">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
 var response = connector.getVariable("response");
+var authorsWithOrcid = connector.getVariable("authorsWithOrcid");
+var authorsWithoutOrcid = connector.getVariable("authorsWithoutOrcid");
+var orcids = connector.getVariable("orcids");
+var given = author.prop("given").value();
+var family = author.prop("family").value();
 
 if (statusCode == 200) {
-var orcid = S(response).prop("result").elements().get(0).prop("orcid-identifier").prop("uri").value();
-var orcid = orcid.substring(18);
-connector.setVariable("orcid", orcid);
+var orcidExist =  S(response).prop("num-found").value();
+    if(orcidExist > 0) {
+       var orcid = S(response).prop("result").elements().get(0).prop("orcid-identifier").prop("uri").value();
+       orcid = orcid.substring(18);
+       orcidExist = 1;
+       var str = "{\"given\":\"" + given + "\",\"family\":\"" + family + "\",\"orcidExist\":\"" + orcidExist + "\",\"orcid\":\"https://orcid.org/" + orcid + "\"}";
+       var json = S(str);
+       authorsWithOrcid.prop("authorsWithOrcid").append(json);
+       orcids.prop("orcids").append(orcid);
+       connector.setVariable("authorsWithOrcid", authorsWithOrcid);
+       connector.setVariable("orcids", orcids);
+    } else {
+       orcidExist = 0;
+       var str = "{\"given\":\"" + given + "\",\"family\":\"" + family + "\",\"orcidExist\":\"" + orcidExist + "\"}";
+       var json = S(str);
+       authorsWithoutOrcid.prop("authorsWithoutOrcid").append(json);
+       connector.setVariable("authorsWithoutOrcid", authorsWithoutOrcid);
+    }
+
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("OrcidError");
 }]]></camunda:script>
@@ -244,6 +333,7 @@ connector.setVariable("orcid", orcid);
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1lrtc79</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0wjgtm2</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${authorList.elements()}" camunda:elementVariable="author" />
     </bpmn:serviceTask>
     <bpmn:task id="Task_1bpy8p4" name="Specify DOI for scholarly article and CWS">
       <bpmn:incoming>SequenceFlow_1725ww7</bpmn:incoming>
@@ -261,22 +351,64 @@ connector.setVariable("orcid", orcid);
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker">https://query.wikidata.org/sparql?query=SELECT+?organization+?city+?country+?website+WHERE%7B?country+wdt:P297+%22${organizationCountry}%22.?city+wdt:P17+?country;wdt:P31+wd:Q22865;skos:altLabel+?obj1.FILTER+REGEX(?obj1,%22${organizationCity}%22)+?organization+wdt:P131+?city;skos:altLabel+?obj2.FILTER+REGEX(?obj2,%22${organizationName}%22)?organization+wdt:P856+?website.%7D</camunda:script>
+              <camunda:script scriptFormat="Javascript"><![CDATA[var affiliationExist = organization.prop("affiliationExist").value();
+
+
+if (affiliationExist == 1) {
+
+var organizationName = organization.prop("organizationName").value();
+organizationName = organizationName.replace(/\s/g, "+");
+var organizationCity = organization.prop("organizationCity").value();
+var organizationCountry = organization.prop("organizationCountry").value();
+
+ var url = "https://query.wikidata.org/sparql?query=SELECT+?organization+?city+?country+?website+WHERE%7B?country+wdt:P297+%22"+organizationCountry+"%22.?city+wdt:P17+?country;wdt:P31+wd:Q22865;skos:altLabel+?obj1.FILTER+REGEX(?obj1,%22"+organizationCity+"%22)+OPTIONAL%7B?organization+wdt:P131+?city;skos:altLabel+?obj2.FILTER+REGEX(?obj2,%22"+organizationName+"%22)?organization+wdt:P856+?website.%7D%7D";
+} else {
+    var url = null;
+}
+
+url;]]></camunda:script>
             </camunda:inputParameter>
             <camunda:outputParameter name="Output_2uubv30">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
 var response = connector.getVariable("response");
+var orcid = organization.prop("orcid");
+var affiliationExist = organization.prop("affiliationExist").value();
+var organizationName = organization.prop("organizationName").value();
+var IDs = connector.getVariable("IDs");
+var OrgaWithoutID = connector.getVariable("OrgaWithoutID");
 
 if (statusCode == 200) {
     var json = S(response).prop("results").prop("bindings").elements().get(0);
     var organizationCountryID = json.prop("country").prop("value").value();
     var organizationCityID = json.prop("city").prop("value").value();
-    var organizationID = json.prop("organization").prop("value").value();
-    var organizationWebsite = json.prop("website").prop("value").value();
-    connector.setVariable("organizationCountryID", organizationCountryID);
-    connector.setVariable("organizationCityID", organizationCityID);
-    connector.setVariable("organizationID", organizationID);
-    connector.setVariable("organizationWebsite", organizationWebsite);
+
+    var fieldnames = json.fieldNames();
+    var organizationExist = 0;
+    if (fieldnames.length > 2) {
+         organizationExist = 1;
+
+         var organizationID = json.prop("organization").prop("value").value();         
+		 if(json.prop("website").prop("value").isNull()){
+			 var organizationWebsite = null;
+		 } else {
+		 	var organizationWebsite = json.prop("website").prop("value").value();
+		 }
+
+     var str = "{\"orcid\":" + orcid + ",\"affiliationExist\":\"" + affiliationExist + "\",\"organizationExist\":\"" + organizationExist + "\",\"organizationName\":\"" + organizationName + "\",\"organizationID\":\"" + organizationID + "\",\"organizationCityID\":\"" + organizationCityID + "\",\"organizationWebsite\":\"" + organizationWebsite + "\"}";
+
+     var IDjson = S(str);
+     IDs.prop("IDs").append(IDjson);  
+     connector.setVariable("IDs", IDs);
+
+    }else{
+
+		var str = "{\"orcid\":" + orcid + ",\"affiliationExist\":\"" + affiliationExist + "\",\"organizationExist\":\"" + organizationExist + "\",\"organizationName\":\"" + organizationName + "\",\"organizationCityID\":\"" + organizationCityID + "\"}";
+                var WithoutIDjson = S(str);
+	        OrgaWithoutID.prop("OrgaWithoutID").append(WithoutIDjson);  
+	        connector.setVariable("OrgaWithoutID", OrgaWithoutID);
+
+   }
+	
 
 } else {
     throw new org.camunda.bpm.engine.delegate.BpmnError("WikidataError");
@@ -286,10 +418,87 @@ if (statusCode == 200) {
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1o31z39</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1rmr4e6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pvhyow</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${organizations.prop(&#34;organizations&#34;).elements()}" camunda:elementVariable="organization" />
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1o31z39" sourceRef="Task_1h7i0wn" targetRef="Task_1cn5g0r" />
+    <bpmn:sequenceFlow id="SequenceFlow_1o31z39" sourceRef="Task_1h7i0wn" targetRef="Task_1q8sa8d" />
+    <bpmn:scriptTask id="Task_1phovhc" name="Generate missing identifiers in spe namespace" scriptFormat="Javascript" camunda:resultVariable=" ">
+      <bpmn:incoming>SequenceFlow_0i3qi7z</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_028rl4q</bpmn:outgoing>
+      <bpmn:script><![CDATA[var doicws = execution.getVariable("doicws");
+var authorsWithoutOrcid = execution.getVariable("authorsWithoutOrcid");
+var authorsWithOrcid = execution.getVariable("authorsWithOrcid");
+var IDs = execution.getVariable("IDs");
+var OrgaWithoutID = execution.getVariable("OrgaWithoutID");
+
+if (doicws) {
+    doicws = "https://doi.org/" + doicws;
+    execution.setVariable("doicws", doicws);
+} else {
+    var ISBN = execution.getVariable("ISBN");
+    doicws = "https://bmake.th-brandenburg.de/spe#ISBN" + ISBN;
+    execution.setVariable("doicws", doicws);
+}
+
+authorsWithoutOrcid = authorsWithoutOrcid.prop("authorsWithoutOrcid").elements();
+
+if(authorsWithoutOrcid.length > 0){
+	authorsWithoutOrcid.forEach(addMissingOrcid);
+}
+
+function addMissingOrcid(value){
+	var given = value.prop("given").value();
+	var family = value.prop("family").value();
+	var orcid = "https://bmake.th-brandenburg.de/spe#" + given.replace(/\s/g, "+") + family.replace(/\s/g, "+");
+	var str = "{\"given\":\"" + given + "\",\"family\":\"" + family + "\",\"orcidExist\":\"1\"" + ",\"orcid\":\"" + orcid + "\"}";
+    var authorJson = S(str);
+    authorsWithOrcid.prop("authorsWithOrcid").append(authorJson);
+}
+
+if(OrgaWithoutID != null){
+     OrgaWithoutID = OrgaWithoutID.prop("OrgaWithoutID").elements();
+
+     if(OrgaWithoutID.length > 0){
+	OrgaWithoutID.forEach(addMissingOrgaID);
+     }
+}
+
+function addMissingOrgaID(value){
+	value.prop("organizationExist", "1");
+	var organizationName = value.prop("organizationName");
+	var organizationID = "https://bmake.th-brandenburg.de/spe#" + organizationName.replace(/\s/g, "+");
+	value.prop("organizationID", organizationID);
+	value.prop("organizationWebsite", "");
+	IDs.prop("IDs").append(value);
+}
+
+execution.setVariable("authorsWithOrcid", authorsWithOrcid);
+execution.setVariable("IDs", IDs);]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:task id="Task_1o9a7yp" name="Add results of qualitative analysis">
+      <bpmn:incoming>SequenceFlow_1qfh79p</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ivuwog</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="Task_0uqxz83" name="Add missing metadata">
+      <bpmn:incoming>SequenceFlow_1v25cef</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qfh79p</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0i3qi7z" sourceRef="Task_056h0f7" targetRef="Task_1phovhc" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rmr4e6" sourceRef="Task_1q8sa8d" targetRef="Task_1cn5g0r" />
+    <bpmn:sequenceFlow id="SequenceFlow_1c38l1h" sourceRef="Task_157rzqp" targetRef="Task_1h7i0wn" />
+    <bpmn:userTask id="Task_056h0f7" name="test3">
+      <bpmn:incoming>SequenceFlow_0gff6w8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0i3qi7z</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_1q8sa8d" name="test2">
+      <bpmn:incoming>SequenceFlow_1o31z39</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rmr4e6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_157rzqp" name="test1">
+      <bpmn:incoming>SequenceFlow_0wjgtm2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1c38l1h</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:serviceTask id="Task_1h7i0wn" name="Request affiliation for authors">
       <bpmn:extensionElements>
         <camunda:connector>
@@ -303,34 +512,170 @@ if (statusCode == 200) {
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="url">
-              <camunda:script scriptFormat="freemarker">https://pub.orcid.org/v2.1/${orcid}/employments</camunda:script>
+              <camunda:script scriptFormat="freemarker">https://pub.orcid.org/v2.1/${orcid.value()}/employments</camunda:script>
             </camunda:inputParameter>
             <camunda:outputParameter name="Output_2o4kru0">
               <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
 var response = connector.getVariable("response");
+var organizations = connector.getVariable("organizations");
 
 if (statusCode == 200) {
-var organization = S(response).prop("employment-summary").elements().get(0).prop("organization");
-var organizationName = organization.prop("name").value();
-organizationName = organizationName.replace(/\s/g, "+");
-var organizationCity = organization.prop("address").prop("city").value();
-organizationCity = organizationCity.replace(/\s/g, "+");
-var organizationCountry = organization.prop("address").prop("country").value();
-connector.setVariable("organizationName", organizationName);
-connector.setVariable("organizationCity", organizationCity);
-connector.setVariable("organizationCountry", organizationCountry);
+	var affiliationExist = 0;
+
+	if (S(response).prop("last-modified-date").isNull()) {
+		affiliationExist = 0;
+		var str = "{\"orcid\":" + orcid + ",\"affiliationExist\":\"" + affiliationExist + "\"}";
+		var json = S(str);
+	} else {
+		affiliationExist = 1;
+		var organization = S(response).prop("employment-summary").elements().get(0).prop("organization");
+		var organizationName = organization.prop("name").value();
+		var organizationCity = organization.prop("address").prop("city").value();
+		organizationCity = organizationCity.replace(/\s/g, "+");
+		var organizationCountry = organization.prop("address").prop("country").value();
+
+		var str = "{\"orcid\":" + orcid + ",\"affiliationExist\":\"" + affiliationExist + "\",\"organizationName\":\"" + organizationName + "\",\"organizationCity\":\"" + organizationCity + "\",\"organizationCountry\":\"" + organizationCountry + "\"}";
+		var json = S(str);
+
+                organizations.prop("organizations").append(json);
+	        connector.setVariable("organizations", organizations);
+
+                var str1 = "{\"IDs\":[]}";
+                var IDlist1 = S(str1);
+                connector.setVariable("IDs", IDlist1);
+           
+                var str2 = "{\"OrgaWithoutID\":[]}";
+                var IDlist2 = S(str2);
+                connector.setVariable("OrgaWithoutID", IDlist2);
+
+	}
+
 } else {
-    throw new org.camunda.bpm.engine.delegate.BpmnError("OrcidError");
+	throw new org.camunda.bpm.engine.delegate.BpmnError("OrcidError");
 }]]></camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0wjgtm2</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1c38l1h</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1o31z39</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${orcids.prop(&#34;orcids&#34;).elements()}" camunda:elementVariable="orcid" />
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0zl22bd" sourceRef="Task_078ej13" targetRef="Task_0q1uk26" />
+    <bpmn:userTask id="Task_078ej13" name="test5">
+      <bpmn:incoming>SequenceFlow_1ayesbr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zl22bd</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Task_0qnba7m" name="Generate RDF data frame" scriptFormat="Javascript" camunda:resultVariable="rdf">
+      <bpmn:incoming>SequenceFlow_1j48u7y</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ayesbr</bpmn:outgoing>
+      <bpmn:script><![CDATA[var doicws = execution.getVariable("doicws");
+var doi = execution.getVariable("doi");
+var title = execution.getVariable("title");
+var container = execution.getVariable("container");
+var publisherID = execution.getVariable("publisherID");
+var authorsWithOrcid = execution.getVariable("authorsWithOrcid").prop("authorsWithOrcid").elements();
+var IDs = execution.getVariable("IDs");
+
+
+
+var prefix = "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . @prefix owl: <http://www.w3.org/2002/07/owl#> . @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . @prefix xsd: <http://www.w3.org/2001/XMLSchema#> . @prefix skos: <http://www.w3.org/2004/02/skos/core#> . @prefix schema: <https://schema.org/> . @prefix wd: <http://www.wikidata.org/entity/> . @prefix dc: <http://purl.org/dc/elements/1.1/> . @prefix dcterms: <http://purl.org/dc/terms/> . @prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> . @prefix spv: <https://bmake.th-brandenburg.de/spv#> . @prefix spe: <https://bmake.th-brandenburg.de/spe#> . @prefix voaf: <http://purl.org/vocommons/voaf#> . @prefix vann: <http://purl.org/vocab/vann/> . @prefix cc: <http://creativecommons.org/ns#> . ";
+
+var article = "<https://doi.org/" + doi + "> a schema:ScholarlyArticle ; schema:headline \"" + title + "\"; schema:isPartOf <" + doicws + "> . ";
+var authors = "";
+
+authorsWithOrcid.forEach(addAuthorOrcid);
+function addAuthorOrcid(value){
+	var orcid = value.prop("orcid").value();
+	var given = value.prop("given").value();
+	var family = value.prop("family").value();
+	
+	article = article + "<https://doi.org/" + doi + "> schema:author <" + orcid + "> . ";
+	authors = authors + "<" + orcid + "> a schema:Person ; schema:familyName \"" + family + "\" ; schema:givenName \"" + given + "\" . ";
+}
+
+var organization = "";
+var city = "";
+
+if (IDs != null) {
+   var IDs = IDs.prop("IDs").elements();
+   IDs.forEach(addOrganization);
+}
+function addOrganization(value){
+	var orcid = value.prop("orcid").value();
+	var organizationName = value.prop("organizationName").value();
+	var organizationID = value.prop("organizationID").value();
+	var organizationCityID = value.prop("organizationCityID").value();
+	var organizationWebsite = value.prop("organizationWebsite").value();
+	
+	authors = authors + "<https://orcid.org/" + orcid + "> schema:affiliation <" + organizationID + "> . ";
+	organization = organization + "<" + organizationID + "> a schema:Organization ; schema:legalName \"" + organizationName + "\" ; schema:location <" + organizationCityID + "> ; schema:url \"" +  organizationWebsite + "\" . ";
+	city = city + "<" + organizationCityID + "> a schema:Place . ";
+}
+
+var cws = "<" + doicws + "> a schema:CreativeWorkSeries ; schema:name \"" + container + "\" ; schema:publisher <" + publisherID + "> . ";
+var publisher = "<" + publisherID + "> a schema:Organization . ";
+
+var rdf = prefix + article + authors + organization + city + cws + publisher;
+
+rdf;]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1j48u7y" sourceRef="Task_1h6fepb" targetRef="Task_0qnba7m" />
+    <bpmn:userTask id="Task_1h6fepb" name="test4">
+      <bpmn:incoming>SequenceFlow_028rl4q</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1j48u7y</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_0q1uk26" name="Import RDF data frame into knowledge base">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="url">
+              <camunda:script scriptFormat="Javascript"><![CDATA[var rdf = execution.getVariable("rdf");
+
+var urlToEncode = "https://bmakewiki.th-brandenburg.de/OntoWiki/index.php/update?query=INSERT DATA INTO <https://bmakewiki.th-brandenburg.de/OntoWiki/index.php/PaperPopulation/> {" + rdf + " }";
+
+urlToEncode = urlToEncode.replace(/\s/g, '+');
+urlToEncode = urlToEncode.replace(/</g, '%3C');
+urlToEncode = urlToEncode.replace(/>/g, '%3E');
+urlToEncode = urlToEncode.replace(/{/g, '%7B');
+urlToEncode = urlToEncode.replace(/}/g, '%7D');
+urlToEncode = urlToEncode.replace(/"/g, '%22');
+urlToEncode = urlToEncode.replace(/#/g, '%23');
+urlToEncode = urlToEncode.replace(/@/g, '%40');
+
+execution.setVariable("urlToEncode", urlToEncode);
+var url = urlToEncode;
+
+url;
+]]></camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/sparql-results+json; charset=utf-8</camunda:entry>
+                <camunda:entry key="Content-Type">application/x-www-form-urlencoded</camunda:entry>
+                <camunda:entry key="Authorization">Basic V2VueGluOnNwdjIwMTc=</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="Output_38mqfdf">
+              <camunda:script scriptFormat="Javascript"><![CDATA[var statusCode = connector.getVariable("statusCode");
+var response = connector.getVariable("response");
+if (statusCode == 200) {
+
+}else{
+    throw new org.camunda.bpm.engine.delegate.BpmnError("OntoWikiError");
+}]]></camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0zl22bd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1v25cef</bpmn:outgoing>
     </bpmn:serviceTask>
   </bpmn:process>
+  <bpmn:error id="Error_1eb7zqb" name="OntoWikiError" errorCode="OntoWikiError" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_19x8n9s">
       <bpmndi:BPMNShape id="Participant_0ddtj9k_di" bpmnElement="Participant_0ddtj9k">
@@ -409,9 +754,9 @@ connector.setVariable("organizationCountry", organizationCountry);
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0wjgtm2_di" bpmnElement="SequenceFlow_0wjgtm2">
         <di:waypoint x="302" y="661" />
-        <di:waypoint x="463" y="661" />
+        <di:waypoint x="345" y="660" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="337.5" y="639.5" width="90" height="13" />
+          <dc:Bounds x="278.5" y="639" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0snzytq_di" bpmnElement="SequenceFlow_0snzytq">
@@ -434,51 +779,39 @@ connector.setVariable("organizationCountry", organizationCountry);
           <dc:Bounds x="560.5" y="493.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_1phovhc_di" bpmnElement="Task_1phovhc">
-        <dc:Bounds x="503" y="60" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0gff6w8_di" bpmnElement="SequenceFlow_0gff6w8">
         <di:waypoint x="553" y="490" />
-        <di:waypoint x="553" y="140" />
+        <di:waypoint x="553" y="271" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="568" y="308.5" width="0" height="13" />
+          <dc:Bounds x="523" y="374" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_0qnba7m_di" bpmnElement="Task_0qnba7m">
-        <dc:Bounds x="653" y="60" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_028rl4q_di" bpmnElement="SequenceFlow_028rl4q">
         <di:waypoint x="603" y="100" />
-        <di:waypoint x="653" y="100" />
+        <di:waypoint x="666" y="100" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="628" y="78" width="0" height="13" />
+          <dc:Bounds x="589.5" y="78.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_0q1uk26_di" bpmnElement="Task_0q1uk26">
-        <dc:Bounds x="653" y="191" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1ayesbr_di" bpmnElement="SequenceFlow_1ayesbr">
-        <di:waypoint x="703" y="140" />
-        <di:waypoint x="703" y="191" />
+        <di:waypoint x="938" y="100" />
+        <di:waypoint x="1024" y="100" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="718" y="159" width="0" height="13" />
+          <dc:Bounds x="936" y="78.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1v25cef_di" bpmnElement="SequenceFlow_1v25cef">
         <di:waypoint x="753" y="231" />
         <di:waypoint x="803" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="778" y="209.5" width="0" height="13" />
+          <dc:Bounds x="733" y="209.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0lvhg5u_di" bpmnElement="Task_0uqxz83">
-        <dc:Bounds x="803" y="191" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1qfh79p_di" bpmnElement="SequenceFlow_1qfh79p">
         <di:waypoint x="903" y="231" />
         <di:waypoint x="953" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="928" y="209.5" width="0" height="13" />
+          <dc:Bounds x="883" y="209.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_11ej7d5_di" bpmnElement="EndEvent_11ej7d5">
@@ -491,12 +824,9 @@ connector.setVariable("organizationCountry", organizationCountry);
         <di:waypoint x="1053" y="231" />
         <di:waypoint x="1103" y="231" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1078" y="209.5" width="0" height="13" />
+          <dc:Bounds x="1033" y="209.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0zevplu_di" bpmnElement="Task_1o9a7yp">
-        <dc:Bounds x="953" y="191" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0u3bc44_di" bpmnElement="Task_1deft6a">
         <dc:Bounds x="202" y="325" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -516,15 +846,82 @@ connector.setVariable("organizationCountry", organizationCountry);
         <dc:Bounds x="633" y="475" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1o31z39_di" bpmnElement="SequenceFlow_1o31z39">
-        <di:waypoint x="563" y="661" />
-        <di:waypoint x="683" y="661" />
-        <di:waypoint x="683" y="555" />
+        <di:waypoint x="588" y="661" />
+        <di:waypoint x="633" y="661" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="623" y="639.5" width="0" height="13" />
+          <dc:Bounds x="565.5" y="639.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0l42hwt_di" bpmnElement="Task_1h7i0wn">
-        <dc:Bounds x="463" y="621" width="100" height="80" />
+        <dc:Bounds x="488" y="621" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_11c6rb5_di" bpmnElement="Task_1phovhc">
+        <dc:Bounds x="503" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0omhq4v_di" bpmnElement="Task_0qnba7m">
+        <dc:Bounds x="838" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0iutlvc_di" bpmnElement="Task_0q1uk26">
+        <dc:Bounds x="653" y="191" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_105vhbc_di" bpmnElement="Task_1o9a7yp">
+        <dc:Bounds x="953" y="191" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1x9e8kr_di" bpmnElement="Task_0uqxz83">
+        <dc:Bounds x="803" y="191" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0i3qi7z_di" bpmnElement="SequenceFlow_0i3qi7z">
+        <di:waypoint x="553" y="191" />
+        <di:waypoint x="553" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="568" y="159" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rmr4e6_di" bpmnElement="SequenceFlow_1rmr4e6">
+        <di:waypoint x="682" y="621" />
+        <di:waypoint x="682" y="588" />
+        <di:waypoint x="683" y="588" />
+        <di:waypoint x="683" y="555" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="682.5" y="566.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_07r7m6z_di" bpmnElement="Task_1q8sa8d">
+        <dc:Bounds x="633" y="621" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c38l1h_di" bpmnElement="SequenceFlow_1c38l1h">
+        <di:waypoint x="445" y="660" />
+        <di:waypoint x="488" y="661" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="466.5" y="639" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0sict2u_di" bpmnElement="Task_157rzqp">
+        <dc:Bounds x="345" y="621" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_01msu2c_di" bpmnElement="Task_056h0f7">
+        <dc:Bounds x="503" y="191" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zl22bd_di" bpmnElement="SequenceFlow_0zl22bd">
+        <di:waypoint x="1024" y="115" />
+        <di:waypoint x="822" y="176" />
+        <di:waypoint x="753" y="208" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="923" y="124" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1dmd6q9_di" bpmnElement="Task_078ej13">
+        <dc:Bounds x="1024" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1j48u7y_di" bpmnElement="SequenceFlow_1j48u7y">
+        <di:waypoint x="766" y="100" />
+        <di:waypoint x="838" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="802" y="78.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0qlj4iz_di" bpmnElement="Task_1h6fepb">
+        <dc:Bounds x="666" y="60" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
